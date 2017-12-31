@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Guestlist</title>
+</head>
+
+<body>
+  <p>Your guestlist look like the following:</p>
+  <ul id="guestList"/>
+</body>
+
+<script>
+  const ul = document.getElementById("guestList");
+  // fetch the guestlist and display into our <ul id=guestlist"> element
+  fetch('/guestlist')
+    .then(res => res.json())
+    .then(function(guestListFromServer) {
+      guestListFromServer.forEach(function(guest) {
+        const li = document.createElement("li");
+        li.appendChild(document.createTextNode(guest.name));
+        ul.appendChild(li);
+      })
+    })
+    .catch(err => { throw err });
+</script>
+</html>
