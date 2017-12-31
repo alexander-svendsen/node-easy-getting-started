@@ -1,10 +1,15 @@
 const express = require('express')
 const sqlite3 = require('sqlite3').verbose();
+const bodyParser = require('body-parser')
 
 const DATABASE_PATH = 'tmp.sqlite3'
 
 //setup the express web framework
-var app = express()
+const app = express()
+
+// parse application/json
+app.use(bodyParser.json())
+
 
 // example request where node answers with a string
 app.get('/test', function (req, res) {
@@ -20,9 +25,9 @@ app.get('/jsontest', function (req, res) {
 
 // example request where the database is accessed and json is returned
 app.get('/guestlist', function (req, res) {
-  let db = new sqlite3.Database(DATABASE_PATH);
+  const db = new sqlite3.Database(DATABASE_PATH);
 
-  let sql = `SELECT * FROM guestlist`;
+  const sql = `SELECT * FROM guestlist`;
 
   db.all(sql, [], function(err, rows){
     if (err) {
@@ -33,6 +38,20 @@ app.get('/guestlist', function (req, res) {
   db.close();
 });
 
+
+app.post('/addGuest', function(req, res){
+  const newGuestName = req.body.name;
+
+  const db = new sqlite3.Database(DATABASE_PATH);
+
+  // insert new guest into the guestlist
+  db.run(`INSERT INTO guestlist(name)
+          VALUES(?)`, [newGuestName])
+
+  db.close();
+
+  res.json({msg: 'OK'})
+})
 
 // Everything in the public folder will be served
 // and localhost:8080/ will open public/index.html

@@ -6,6 +6,12 @@
 </head>
 
 <body>
+  <form onsubmit="return addNewGuest()">
+    Guest name:
+    <input id="guestName" type="text" required>
+    <input type="submit" value="Submit">
+  </form>
+
   <p>Your guestlist look like the following:</p>
   <ul id="guestList"/>
 </body>
@@ -23,5 +29,32 @@
       })
     })
     .catch(err => { throw err });
+
+  function addNewGuest(event){
+    const newGuestName = document.getElementById("guestName").value;
+    document.getElementById("guestName").value = "";
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name: newGuestName})
+    }
+
+    fetch('/addGuest', options)
+    .then(function(response) {
+      if (!response.ok) {
+            throw Error(response.statusText);
+        }
+
+      const li = document.createElement("li");
+      li.appendChild(document.createTextNode(newGuestName));
+      ul.appendChild(li);
+    });
+
+
+    return false
+  }
 </script>
 </html>
